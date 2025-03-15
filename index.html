@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +7,6 @@
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
   <header>
     <h1>Hermes</h1>
@@ -21,6 +19,8 @@
     </nav>
   </header>
   <main data-controller="email">
+    <div class="email-list" data-email-target="emailList">
+    </div>
   </main>
   <footer>
   </footer>
@@ -33,5 +33,4 @@
     app.register("email", EmailController);
   </script>
 </body>
-
 </html>
