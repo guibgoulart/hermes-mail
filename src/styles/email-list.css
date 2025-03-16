@@ -1,0 +1,46 @@
+.email-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.email-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #3c3c3c;
+  border-radius: 4px;
+  background-color: #2a2a2a;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.email-item:hover {
+  background-color: #3c3c3c;
+}
+
+.email-item.selected {
+  background-color: #3c3c3c;
+  border-color: #a6e22e;
+}
+
+.email-id {
+  width: 50px;
+  color: #6a9955;
+}
+
+.email-sender {
+  font-weight: bold;
+  color: #a6e22e;
+}
+
+.email-subject {
+  flex: 1;
+  margin: 0 20px;
+  color: #9ccc9c;
+}
+
+.email-date {
+  color: #6a9955;
+}

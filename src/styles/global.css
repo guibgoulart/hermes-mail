@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'IBM Plex Mono', monospace;
+  background-color: #1e1e1e;
+  color: #9ccc9c;
+  line-height: 1.6;
+  padding: 20px;
+}

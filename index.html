@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hermes</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="src/styles/global.css">
+  <link rel="stylesheet" href="src/styles/header.css">
+  <link rel="stylesheet" href="src/styles/email-list.css">
+  <link rel="stylesheet" href="src/styles/footer.css">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
   <header>
     <h1>Hermes</h1>
     <nav>
       <ul>
-        <li><a href="#">Inbox</a></li>
-        <li><a href="#">Sent</a></li>
-        <li><a href="#">Trash</a></li>
+        <li><a href="#">[I]nbox</a></li>
+        <li><a href="#">[S]ent</a></li>
+        <li><a href="#">[T]rash</a></li>
       </ul>
+      <button id="compose-button">[C]ompose</button>
     </nav>
   </header>
   <main data-controller="email">
@@ -23,14 +29,18 @@
     </div>
   </main>
   <footer>
+    <div class="command-bar">
+      <input type="text" id="command-input" placeholder="Type a command (e.g., 'compose', 'help')">
+    </div>
   </footer>
 
   <script type="module">
     import { Application } from "https://cdn.skypack.dev/@hotwired/stimulus";
-    import EmailController from "./src/email_controller.js";
+    import EmailController from "./src/controllers/email_controller.js";
 
     const app = Application.start();
     app.register("email", EmailController);
   </script>
 </body>
+
 </html>
