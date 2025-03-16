@@ -6,6 +6,17 @@ header {
   border-bottom: 1px solid #3c3c3c;
 }
 
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  height: 30px;
+  width: auto;
+}
+
 header h1 {
   font-size: 24px;
   font-weight: bold;
