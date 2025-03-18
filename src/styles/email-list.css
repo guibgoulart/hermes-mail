@@ -44,3 +44,8 @@
 .email-date {
   color: #6a9955;
 }
+
+.email-item.unread {
+  border-left: 3px solid #a6e22e; /* Add a left border for unread emails */
+  padding-left: 7px; /* Adjust padding to account for the border */
+}
