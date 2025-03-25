@@ -121,4 +121,16 @@ export default class extends Controller {
   composeEmail() {
     alert("Compose email functionality coming soon!");
   }
+
+  reply() {
+    alert("Reply functionality");
+  }
+
+  forward() {
+    alert("Forward functionality");
+  }
+
+  delete() {
+    alert("Delete functionality");
+  }
 }

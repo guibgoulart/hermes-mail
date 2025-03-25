@@ -32,6 +32,12 @@
     <div class="email-list" data-email-target="emailList"></div>
     <div class="email-viewer" data-email-target="emailViewer">
       <div class="email-viewer-container">
+        <div class="email-toolbar">
+          <button data-action="click->email#reply">[R]eply</button>
+          <button data-action="click->email#forward">[F]orward</button>
+          <button data-action="click->email#delete">[D]elete</button>
+          <button class="close-button" data-action="click->email#showEmailList">[Esc] Close</button>
+        </div>
         <div class="email-header">
           <div class="email-view-sender" data-email-target="emailSender"></div>
           <div class="email-view-subject" data-email-target="emailSubject"></div>

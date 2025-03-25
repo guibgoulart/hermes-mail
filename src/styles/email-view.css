@@ -43,14 +43,44 @@
   margin-bottom: 10px;
 }
 
+.email-toolbar {
+  display: flex;
+  gap: 15px;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+.email-toolbar button {
+  background: none;
+  border: none;
+  color: #9ccc9c;
+  font-family: 'IBM Plex Mono', monospace;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.email-toolbar button:hover {
+  background-color: #3c3c3c;
+  color: #a6e22e;
+}
+
+.close-button {
+  margin-left: auto;
+  color: #cc6666 !important;
+}
+
 .email-content {
   white-space: pre-wrap;
   font-size: 14px;
-  line-height: 1.6;
-  color: #9ccc9c;
+  line-height: 1.8;
+  color: #d4d4d4;
   padding: 20px;
   background-color: #1e1e1e;
   border: 1px solid #3c3c3c;
   border-radius: 4px;
-  margin-top: 20px;
+  margin-top: 10px;
+  font-family: 'IBM Plex Mono', monospace;
 }
