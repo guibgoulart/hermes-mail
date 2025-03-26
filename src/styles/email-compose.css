@@ -1,0 +1,76 @@
+.compose-page {
+    display: none;
+    margin-top: 20px;
+  }
+  
+  .compose-page.visible {
+    display: block;
+  }
+  
+  .compose-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #2a2a2a;
+    border: 1px solid #3c3c3c;
+    border-radius: 8px;
+  }
+  
+  .compose-container h2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #a6e22e;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #3c3c3c;
+    padding-bottom: 10px;
+  }
+  
+  .compose-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .compose-fields label {
+    color: #6a9955;
+  }
+  
+  .compose-fields input,
+  .compose-fields textarea {
+    width: 100%;
+    padding: 8px;
+    background-color: #1e1e1e;
+    border: 1px solid #3c3c3c;
+    color: #9ccc9c;
+    font-family: 'IBM Plex Mono', monospace;
+    border-radius: 4px;
+  }
+  
+  .compose-fields input:focus,
+  .compose-fields textarea:focus {
+    outline: none;
+    border-color: #a6e22e;
+  }
+  
+  .compose-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  
+  .compose-actions button {
+    background: none;
+    border: 1px solid #3c3c3c;
+    color: #9ccc9c;
+    padding: 5px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .compose-actions button:hover {
+    background-color: #3c3c3c;
+    color: #a6e22e;
+  }  
