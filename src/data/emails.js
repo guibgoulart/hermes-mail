@@ -6,6 +6,7 @@ export const emails = [
     date: "2025-01-01",
     body: "Thank you for joining Hermes!",
     read: false,
+    folder: "inbox",
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const emails = [
     date: "2025-01-02",
     body: "Please complete the email client assignment.",
     read: false,
+    folder: "inbox",
   },
   {
     id: 3,
@@ -22,5 +24,6 @@ export const emails = [
     date: "2025-01-03",
     body: "Let us know if you need help.",
     read: false,
+    folder: "inbox",
   },
 ];

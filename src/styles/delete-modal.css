@@ -1,0 +1,52 @@
+.delete-modal {
+    display: none;
+  
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background-color: rgba(30, 30, 30, 0.8);
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .delete-modal.show {
+    display: flex;
+  }
+  
+  .delete-modal-content {
+    background-color: #2a2a2a;
+    border: 1px solid #3c3c3c;
+    border-radius: 8px;
+    max-width: 400px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .delete-modal-content p {
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #9ccc9c;
+  }
+  
+  .delete-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .delete-modal-actions button {
+    background: none;
+    border: 1px solid #3c3c3c;
+    color: #9ccc9c;
+    padding: 5px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .delete-modal-actions button:hover {
+    background-color: #3c3c3c;
+    color: #a6e22e;
+  }
+  

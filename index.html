@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="src/styles/email-view.css" />
     <link rel="stylesheet" href="src/styles/footer.css" />
     <link rel="stylesheet" href="src/styles/email-compose.css" />
+    <link rel="stylesheet" href="src/styles/delete-modal.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap"
       rel="stylesheet"
@@ -17,16 +18,28 @@
   </head>
 
   <body data-controller="email">
-    <header>
+    <header class="header-container">
       <div class="header-title">
         <img src="/assets/logo.svg" alt="Hermes Logo" class="logo" />
         <h1>Hermes</h1>
       </div>
       <nav>
         <ul>
-          <li><a href="#">[I]nbox</a></li>
-          <li><a href="#">[S]ent</a></li>
-          <li><a href="#">[T]rash</a></li>
+          <li>
+            <a href="#" data-folder="inbox" data-action="click->email#showInbox"
+              >[I]nbox</a
+            >
+          </li>
+          <li>
+            <a href="#" data-folder="sent" data-action="click->email#showSent"
+              >[S]ent</a
+            >
+          </li>
+          <li>
+            <a href="#" data-folder="trash" data-action="click->email#showTrash"
+              >[T]rash</a
+            >
+          </li>
         </ul>
         <button data-action="click->email#composeEmail" id="compose-button">
           [C]ompose
@@ -82,6 +95,15 @@
         </div>
       </div>
     </main>
+    <div class="delete-modal" data-email-target="deleteModal">
+      <div class="delete-modal-content">
+        <p>Are you sure you want to delete this email?</p>
+        <div class="delete-modal-actions">
+          <button data-action="click->email#confirmDelete">[Y]es</button>
+          <button data-action="click->email#cancelDelete">[N]o</button>
+        </div>
+      </div>
+    </div>
     <footer>
       <div class="command-bar">
         <input

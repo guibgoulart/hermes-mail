@@ -61,3 +61,11 @@ header nav ul li a:hover {
 #compose-button:hover {
   background-color: #3c3c3c;
 }
+
+header nav ul li a.active {
+  color: #a6e22e;
+  background-color: #3c3c3c;
+  border-bottom: 2px solid #a6e22e;
+  padding-bottom: 2px;
+  transition: background-color 0.2s ease;
+}

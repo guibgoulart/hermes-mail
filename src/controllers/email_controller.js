@@ -12,14 +12,17 @@ export default class extends Controller {
     "composePage",
     "composeTo",
     "composeSubject",
-    "composeBody"
+    "composeBody",
+    "deleteModal"
   ];
 
   connect() {
-    console.log("Email controller connected");
+    this.currentFolder = "inbox";
     this.renderEmails();
     this.setupKeyboardShortcuts();
     this.selectedEmailIndex = -1;
+
+    this.highlightNav("inbox");
   }
 
   getEmails() {
@@ -27,7 +30,11 @@ export default class extends Controller {
   }
 
   renderEmails() {
-    this.emailListTarget.innerHTML = this.getEmails()
+    const folderEmails = this.getEmails().filter(
+      (email) => email.folder === this.currentFolder
+    );
+  
+    this.emailListTarget.innerHTML = folderEmails
       .map(
         (email) => `
           <div class="email-item ${email.read ? "" : "unread"}" data-email-id="${email.id}">
@@ -39,26 +46,37 @@ export default class extends Controller {
         `
       )
       .join("");
-
+  
     this.setupEmailSelection();
   }
 
   setupKeyboardShortcuts() {
     document.addEventListener("keydown", (event) => {
-      // If the user is currently typing in input/textarea, skip global shortcuts
       const tagName = event.target.tagName.toLowerCase();
+      const isModalOpen = this.deleteModalTarget.classList.contains("show");
+  
+      // If a user is typing in an input/textarea, skip global shortcuts (unless "Escape")
       if ((tagName === "input" || tagName === "textarea") && event.key !== "Escape") {
         return;
       }
-
+  
+      if (isModalOpen) {
+        if (event.key === "y") {
+          this.confirmDelete();
+        } else if (event.key === "n") {
+          this.cancelDelete();
+        }
+        return;
+      }
+  
       const emailItems = this.emailListTarget.querySelectorAll(".email-item");
   
       if (event.key === "i") {
-        window.location.hash = "#inbox";
+        this.showInbox();
       } else if (event.key === "s") {
-        window.location.hash = "#sent";
+        this.showSent();
       } else if (event.key === "t") {
-        window.location.hash = "#trash";
+        this.showTrash();
       } else if (event.key === "c") {
         this.composeEmail();
       } else if (event.key === ":") {
@@ -78,6 +96,8 @@ export default class extends Controller {
         } else {
           this.showEmailList();
         }
+      } else if (event.key === "d") {
+        this.delete();
       }
     });
   }  
@@ -117,17 +137,20 @@ export default class extends Controller {
       this.emailSubjectTarget.textContent = `Subject: ${email.subject}`;
       this.emailDateTarget.textContent = `Date: ${email.date}`;
       this.emailBodyTarget.textContent = email.body;
-
+  
+      // Store current email ID
+      this.currentEmailId = parseInt(emailId);
+  
       // Hide list and compose, show viewer
       this.emailListTarget.style.display = "none";
       this.composePageTarget.classList.remove("visible");
       this.emailViewerTarget.classList.add("visible");
-
+  
       // Mark as read and refresh
       email.read = true;
       this.renderEmails();
     }
-  }
+  }  
 
   showEmailList() {
     this.emailListTarget.style.display = "block";
@@ -165,7 +188,8 @@ export default class extends Controller {
       subject,
       body,
       date: new Date().toLocaleString(),
-      read: false
+      read: false,
+      folder: "sent",
     };
     this.getEmails().push(newEmail);
 
@@ -189,6 +213,70 @@ export default class extends Controller {
   }
 
   delete() {
-    alert("Delete functionality");
+    if (!this.currentEmailId) return;
+    // Show the confirmation modal, hide rest of the UI if desired
+    this.deleteModalTarget.classList.add("show");
   }
+
+  confirmDelete() {
+    // Actually delete or move to trash
+    const email = this.getEmails().find(e => e.id === this.currentEmailId);
+    if (!email) return;
+
+    // Example: Move to trash if not there, otherwise remove from array
+    if (email.folder === "trash") {
+      const idx = this.getEmails().indexOf(email);
+      this.getEmails().splice(idx, 1);
+    } else {
+      email.folder = "trash";
+    }
+
+    // Hide the modal, show the list, re-render
+    this.deleteModalTarget.classList.remove("show");
+    this.showEmailList();
+    this.renderEmails();
+  }
+
+  cancelDelete() {
+    // Hide the modal only
+    this.deleteModalTarget.classList.remove("show");
+  }
+
+  showInbox() {
+    this.currentFolder = "inbox";
+    this.highlightNav("inbox");
+    this.showEmailList();
+    this.renderEmails();
+  }
+  
+  showSent() {
+    this.currentFolder = "sent";
+    this.highlightNav("sent");
+    this.showEmailList();
+    this.renderEmails();
+  }
+  
+  showTrash() {
+    this.currentFolder = "trash";
+    this.highlightNav("trash");
+    this.showEmailList();
+    this.renderEmails();
+  }
+
+  highlightNav(folderName) {
+    // Grab all nav links
+    const navLinks = document.querySelectorAll("header nav ul li a");
+  
+    // Remove 'active' from any previously active link
+    navLinks.forEach((link) => {
+      link.classList.remove("active");
+    });
+  
+    // Find the link whose data-folder matches folderName
+    const activeLink = [...navLinks].find(link => link.dataset.folder === folderName);
+    if (activeLink) {
+      activeLink.classList.add("active");
+    }
+  }
+  
 }

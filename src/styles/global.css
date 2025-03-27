@@ -1,7 +1,8 @@
-* {
+html,
+body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  height: 100%;
 }
 
 body {
@@ -9,5 +10,12 @@ body {
   background-color: #1e1e1e;
   color: #9ccc9c;
   line-height: 1.6;
+}
+
+main {
+  padding: 20px;
+}
+
+.header-container {
   padding: 20px;
 }
