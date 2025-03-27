@@ -13,7 +13,7 @@ export default class extends Controller {
     "composeTo",
     "composeSubject",
     "composeBody",
-    "deleteModal"
+    "deleteModal",
   ];
 
   connect() {
@@ -33,11 +33,13 @@ export default class extends Controller {
     const folderEmails = this.getEmails().filter(
       (email) => email.folder === this.currentFolder
     );
-  
+
     this.emailListTarget.innerHTML = folderEmails
       .map(
         (email) => `
-          <div class="email-item ${email.read ? "" : "unread"}" data-email-id="${email.id}">
+          <div class="email-item ${
+            email.read ? "" : "unread"
+          }" data-email-id="${email.id}">
             <div class="email-id">${email.id}</div>
             <div class="email-sender">${email.sender}</div>
             <div class="email-subject">${email.subject}</div>
@@ -46,7 +48,7 @@ export default class extends Controller {
         `
       )
       .join("");
-  
+
     this.setupEmailSelection();
   }
 
@@ -55,11 +57,15 @@ export default class extends Controller {
       const tagName = event.target.tagName.toLowerCase();
       const isModalOpen = this.deleteModalTarget.classList.contains("show");
   
-      // If a user is typing in an input/textarea, skip global shortcuts (unless "Escape")
-      if ((tagName === "input" || tagName === "textarea") && event.key !== "Escape") {
+      // If user is in input/textarea (and didn't press Esc), skip shortcuts
+      if (
+        (tagName === "input" || tagName === "textarea") &&
+        event.key !== "Escape"
+      ) {
         return;
       }
   
+      // If the delete modal is open, only handle "y" or "n"
       if (isModalOpen) {
         if (event.key === "y") {
           this.confirmDelete();
@@ -69,6 +75,7 @@ export default class extends Controller {
         return;
       }
   
+      // Normal shortcuts
       const emailItems = this.emailListTarget.querySelectorAll(".email-item");
   
       if (event.key === "i") {
@@ -82,10 +89,16 @@ export default class extends Controller {
       } else if (event.key === ":") {
         document.getElementById("command-input").focus();
       } else if (event.key === "ArrowDown") {
-        this.selectedEmailIndex = Math.min(this.selectedEmailIndex + 1, emailItems.length - 1);
+        this.selectedEmailIndex = Math.min(
+          this.selectedEmailIndex + 1,
+          emailItems.length - 1
+        );
         this.highlightEmail(emailItems, this.selectedEmailIndex);
       } else if (event.key === "ArrowUp") {
-        this.selectedEmailIndex = Math.max(this.selectedEmailIndex - 1, 0);
+        this.selectedEmailIndex = Math.max(
+          this.selectedEmailIndex - 1,
+          0
+        );
         this.highlightEmail(emailItems, this.selectedEmailIndex);
       } else if (event.key === "Enter" && this.selectedEmailIndex >= 0) {
         const emailId = emailItems[this.selectedEmailIndex].dataset.emailId;
@@ -98,6 +111,17 @@ export default class extends Controller {
         }
       } else if (event.key === "d") {
         this.delete();
+      } 
+      else if (event.key === "r") {
+        // Only reply if we're currently viewing an email
+        if (this.currentEmailId) {
+          this.reply();
+        }
+      } else if (event.key === "f") {
+        // Only forward if we're currently viewing an email
+        if (this.currentEmailId) {
+          this.forward();
+        }
       }
     });
   }  
@@ -137,20 +161,20 @@ export default class extends Controller {
       this.emailSubjectTarget.textContent = `Subject: ${email.subject}`;
       this.emailDateTarget.textContent = `Date: ${email.date}`;
       this.emailBodyTarget.textContent = email.body;
-  
+
       // Store current email ID
       this.currentEmailId = parseInt(emailId);
-  
+
       // Hide list and compose, show viewer
       this.emailListTarget.style.display = "none";
       this.composePageTarget.classList.remove("visible");
       this.emailViewerTarget.classList.add("visible");
-  
+
       // Mark as read and refresh
       email.read = true;
       this.renderEmails();
     }
-  }  
+  }
 
   showEmailList() {
     this.emailListTarget.style.display = "block";
@@ -205,11 +229,57 @@ export default class extends Controller {
   }
 
   reply() {
-    alert("Reply functionality");
+    const email = this.getEmails().find((e) => e.id === this.currentEmailId);
+    if (!email) return;
+
+    // Hide any visible sections
+    this.emailListTarget.style.display = "none";
+    this.emailViewerTarget.classList.remove("visible");
+
+    // Show compose
+    this.composePageTarget.classList.add("visible");
+
+    // Fill fields for a reply
+    this.composeToTarget.value = email.sender;
+
+    // If subject doesn't already start with "Re: ", add it
+    let subjectPrefix = email.subject.startsWith("Re: ") ? "" : "Re: ";
+    this.composeSubjectTarget.value = subjectPrefix + email.subject;
+
+    // Optionally quote the original email
+    this.composeBodyTarget.value = `
+    On ${email.date}, ${email.sender} wrote:
+    ${email.body}
+    `;
   }
 
   forward() {
-    alert("Forward functionality");
+    const email = this.getEmails().find((e) => e.id === this.currentEmailId);
+    if (!email) return;
+
+    // Hide other sections
+    this.emailListTarget.style.display = "none";
+    this.emailViewerTarget.classList.remove("visible");
+
+    // Show compose
+    this.composePageTarget.classList.add("visible");
+
+    // "To" is blank by default
+    this.composeToTarget.value = "";
+
+    // If subject doesn't start with "Fwd: ", add it
+    let subjectPrefix = email.subject.startsWith("Fwd: ") ? "" : "Fwd: ";
+    this.composeSubjectTarget.value = subjectPrefix + email.subject;
+
+    // Quote entire original email
+    this.composeBodyTarget.value = `
+    ---------- Forwarded message ---------
+    From: ${email.sender}
+    Date: ${email.date}
+    Subject: ${email.subject}
+    
+    ${email.body}
+    `;
   }
 
   delete() {
@@ -220,7 +290,7 @@ export default class extends Controller {
 
   confirmDelete() {
     // Actually delete or move to trash
-    const email = this.getEmails().find(e => e.id === this.currentEmailId);
+    const email = this.getEmails().find((e) => e.id === this.currentEmailId);
     if (!email) return;
 
     // Example: Move to trash if not there, otherwise remove from array
@@ -248,14 +318,14 @@ export default class extends Controller {
     this.showEmailList();
     this.renderEmails();
   }
-  
+
   showSent() {
     this.currentFolder = "sent";
     this.highlightNav("sent");
     this.showEmailList();
     this.renderEmails();
   }
-  
+
   showTrash() {
     this.currentFolder = "trash";
     this.highlightNav("trash");
@@ -266,17 +336,18 @@ export default class extends Controller {
   highlightNav(folderName) {
     // Grab all nav links
     const navLinks = document.querySelectorAll("header nav ul li a");
-  
+
     // Remove 'active' from any previously active link
     navLinks.forEach((link) => {
       link.classList.remove("active");
     });
-  
+
     // Find the link whose data-folder matches folderName
-    const activeLink = [...navLinks].find(link => link.dataset.folder === folderName);
+    const activeLink = [...navLinks].find(
+      (link) => link.dataset.folder === folderName
+    );
     if (activeLink) {
       activeLink.classList.add("active");
     }
   }
-  
 }
