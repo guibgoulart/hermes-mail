@@ -55,27 +55,59 @@ export default class extends Controller {
   setupKeyboardShortcuts() {
     document.addEventListener("keydown", (event) => {
       const tagName = event.target.tagName.toLowerCase();
-      const isModalOpen = this.deleteModalTarget.classList.contains("show");
   
-      // If user is in input/textarea (and didn't press Esc), skip shortcuts
+      // If user is typing in input/textarea, skip global shortcuts 
+      // Except for Esc (to exit screen) or Enter (to send if compose is open).
       if (
         (tagName === "input" || tagName === "textarea") &&
-        event.key !== "Escape"
+        event.key !== "Escape" && 
+        event.key !== "Enter"
       ) {
         return;
       }
   
-      // If the delete modal is open, only handle "y" or "n"
+      const isModalOpen = this.deleteModalTarget.classList.contains("show");
+      const isComposeOpen = this.composePageTarget.classList.contains("visible");
+      const isViewerOpen = this.emailViewerTarget.classList.contains("visible");
+  
       if (isModalOpen) {
+        // ESC also closes the modal
+        if (event.key === "Escape") {
+          this.cancelDelete();
+          return;
+        }
         if (event.key === "y") {
           this.confirmDelete();
-        } else if (event.key === "n") {
+          return;
+        } 
+        if (event.key === "n") {
           this.cancelDelete();
+          return;
         }
-        return;
+        return; 
       }
   
-      // Normal shortcuts
+      if (isComposeOpen) {
+        // ESC cancels compose
+        if (event.key === "Escape") {
+          this.cancelCompose();
+          return;
+        }
+        if (event.key === "Enter") {
+          this.sendComposedEmail();
+          return;
+        }
+      }
+  
+      // --- If the viewer is open (but not the modal) ---
+      if (isViewerOpen) {
+        // ESC closes the viewer
+        if (event.key === "Escape") {
+          this.showEmailList();
+          return;
+        }
+      }
+  
       const emailItems = this.emailListTarget.querySelectorAll(".email-item");
   
       if (event.key === "i") {
@@ -87,7 +119,7 @@ export default class extends Controller {
       } else if (event.key === "c") {
         this.composeEmail();
       } else if (event.key === ":") {
-        document.getElementById("command-input").focus();
+        document.getElementById("command-input")?.focus();
       } else if (event.key === "ArrowDown") {
         this.selectedEmailIndex = Math.min(
           this.selectedEmailIndex + 1,
@@ -101,30 +133,23 @@ export default class extends Controller {
         );
         this.highlightEmail(emailItems, this.selectedEmailIndex);
       } else if (event.key === "Enter" && this.selectedEmailIndex >= 0) {
+        // If user hits Enter on a selected email, open the viewer
         const emailId = emailItems[this.selectedEmailIndex].dataset.emailId;
         this.showEmail(emailId);
-      } else if (event.key === "Escape") {
-        if (this.composePageTarget.classList.contains("visible")) {
-          this.cancelCompose();
-        } else {
-          this.showEmailList();
-        }
       } else if (event.key === "d") {
+        // if in the list and press d, delete
         this.delete();
-      } 
-      else if (event.key === "r") {
-        // Only reply if we're currently viewing an email
+      } else if (event.key === "r") {
         if (this.currentEmailId) {
           this.reply();
         }
       } else if (event.key === "f") {
-        // Only forward if we're currently viewing an email
         if (this.currentEmailId) {
           this.forward();
         }
       }
     });
-  }  
+  }
 
   setupEmailSelection() {
     const emailItems = this.emailListTarget.querySelectorAll(".email-item");
