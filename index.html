@@ -52,7 +52,7 @@
         <div class="email-viewer-container">
           <div class="email-toolbar">
             <button data-action="click->email#reply">[R]eply</button>
-            <button data-action="click->email#forward">[F]orward</button>            
+            <button data-action="click->email#forward">[F]orward</button>
             <button data-action="click->email#delete">[D]elete</button>
             <button
               class="close-button"
@@ -66,10 +66,8 @@
               class="email-view-sender"
               data-email-target="emailSender"
             ></div>
-            <div
-              class="email-view-subject"
-              data-email-target="emailSubject"
-            ></div>
+            <div class="email-view-to" data-email-target="emailTo"></div>
+            <div class="email-view-subject" data-email-target="emailSubject"></div>
             <div class="email-view-date" data-email-target="emailDate"></div>
           </div>
           <div class="email-content" data-email-target="emailBody"></div>
@@ -89,7 +87,9 @@
             <textarea data-email-target="composeBody"></textarea>
           </div>
           <div class="compose-actions">
-            <button data-action="click->email#sendComposedEmail">Send</button>
+            <button data-action="click->email#sendComposedEmail">
+              Send [Ctrl + Enter]
+            </button>
             <button data-action="click->email#cancelCompose">Cancel</button>
           </div>
         </div>

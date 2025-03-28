@@ -84,3 +84,10 @@
   margin-top: 10px;
   font-family: 'IBM Plex Mono', monospace;
 }
+
+.email-view-to {
+  font-size: 16px;
+  font-weight: bold;
+  color: #a6e22e;
+  margin-bottom: 10px;
+}

@@ -1,5 +1,6 @@
 import { Controller } from "https://cdn.skypack.dev/@hotwired/stimulus";
 import { emails } from "../data/emails.js";
+import { setupKeyboardShortcuts } from "../utils/keyboardShortcuts.js";
 
 export default class extends Controller {
   static targets = [
@@ -9,6 +10,7 @@ export default class extends Controller {
     "emailSender",
     "emailSubject",
     "emailDate",
+    "emailTo",
     "composePage",
     "composeTo",
     "composeSubject",
@@ -19,10 +21,9 @@ export default class extends Controller {
   connect() {
     this.currentFolder = "inbox";
     this.renderEmails();
-    this.setupKeyboardShortcuts();
     this.selectedEmailIndex = -1;
-
     this.highlightNav("inbox");
+    setupKeyboardShortcuts(this);
   }
 
   getEmails() {
@@ -50,105 +51,6 @@ export default class extends Controller {
       .join("");
 
     this.setupEmailSelection();
-  }
-
-  setupKeyboardShortcuts() {
-    document.addEventListener("keydown", (event) => {
-      const tagName = event.target.tagName.toLowerCase();
-  
-      // If user is typing in input/textarea, skip global shortcuts 
-      // Except for Esc (to exit screen) or Enter (to send if compose is open).
-      if (
-        (tagName === "input" || tagName === "textarea") &&
-        event.key !== "Escape" && 
-        event.key !== "Enter"
-      ) {
-        return;
-      }
-  
-      const isModalOpen = this.deleteModalTarget.classList.contains("show");
-      const isComposeOpen = this.composePageTarget.classList.contains("visible");
-      const isViewerOpen = this.emailViewerTarget.classList.contains("visible");
-  
-      if (isModalOpen) {
-        // ESC also closes the modal
-        if (event.key === "Escape") {
-          this.cancelDelete();
-          return;
-        }
-        if (event.key === "y") {
-          this.confirmDelete();
-          return;
-        } 
-        if (event.key === "n") {
-          this.cancelDelete();
-          return;
-        }
-        return; 
-      }
-  
-      if (isComposeOpen) {
-        // ESC cancels compose
-        if (event.key === "Escape") {
-          this.cancelCompose();
-          return;
-        }
-        if (event.key === "Enter") {
-          this.sendComposedEmail();
-          return;
-        }
-      }
-  
-      // --- If the viewer is open (but not the modal) ---
-      if (isViewerOpen) {
-        // ESC closes the viewer
-        if (event.key === "Escape") {
-          this.showEmailList();
-          return;
-        }
-      }
-  
-      const emailItems = this.emailListTarget.querySelectorAll(".email-item");
-  
-      if (event.key === "i") {
-        this.showInbox();
-      } else if (event.key === "s") {
-        this.showSent();
-      } else if (event.key === "t") {
-        this.showTrash();
-      } else if (event.key === "c") {
-        this.composeEmail();
-      } else if (event.key === ":") {
-        document.getElementById("command-input")?.focus();
-      } else if (event.key === "ArrowDown") {
-        this.selectedEmailIndex = Math.min(
-          this.selectedEmailIndex + 1,
-          emailItems.length - 1
-        );
-        this.highlightEmail(emailItems, this.selectedEmailIndex);
-      } else if (event.key === "ArrowUp") {
-        this.selectedEmailIndex = Math.max(
-          this.selectedEmailIndex - 1,
-          0
-        );
-        this.highlightEmail(emailItems, this.selectedEmailIndex);
-      } else if (event.key === "Enter" && this.selectedEmailIndex >= 0) {
-        // If user hits Enter on a selected email, open the viewer
-        const emailId = emailItems[this.selectedEmailIndex].dataset.emailId;
-        this.showEmail(emailId);
-      } else if (event.key === "d") {
-        // if in the list and press d, delete
-        this.delete();
-      } else if (event.key === "r") {
-        if (this.currentEmailId) {
-          this.reply();
-        }
-      } else if (event.key === "f") {
-        if (this.currentEmailId) {
-          this.forward();
-        }
-      }
-    });
   }
 
   setupEmailSelection() {
@@ -189,6 +91,14 @@ export default class extends Controller {
 
       // Store current email ID
       this.currentEmailId = parseInt(emailId);
+
+      if (email.folder === "sent") {
+        this.emailToTarget.textContent = `To: ${email.to || "me@hermes.local"}`;
+      } else {
+      // Assume it's an inbound email; the user is the recipient
+        this.emailToTarget.textContent = "To: me@hermes.local";
+      }
+        
 
       // Hide list and compose, show viewer
       this.emailListTarget.style.display = "none";
@@ -234,6 +144,7 @@ export default class extends Controller {
     const newEmail = {
       id: this.getEmails().length + 1,
       sender: "me@hermes.local",
+      to: to,
       subject,
       body,
       date: new Date().toLocaleString(),
@@ -308,8 +219,12 @@ export default class extends Controller {
   }
 
   delete() {
-    if (!this.currentEmailId) return;
-    // Show the confirmation modal, hide rest of the UI if desired
+    // If not in the viewer or no currentEmailId, do nothing
+    if (!this.currentEmailId || !this.emailViewerTarget.classList.contains("visible")) {
+      return;
+    }
+    
+    // Show modal
     this.deleteModalTarget.classList.add("show");
   }
 
@@ -318,7 +233,6 @@ export default class extends Controller {
     const email = this.getEmails().find((e) => e.id === this.currentEmailId);
     if (!email) return;
 
-    // Example: Move to trash if not there, otherwise remove from array
     if (email.folder === "trash") {
       const idx = this.getEmails().indexOf(email);
       this.getEmails().splice(idx, 1);

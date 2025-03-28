@@ -7,6 +7,7 @@ export const emails = [
     body: "Thank you for joining Hermes!",
     read: false,
     folder: "inbox",
+    to: "me@hermes.local"
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ export const emails = [
     body: "Please complete the email client assignment.",
     read: false,
     folder: "inbox",
+    to: "me@hermes.local"
   },
   {
     id: 3,
@@ -25,5 +27,6 @@ export const emails = [
     body: "Let us know if you need help.",
     read: false,
     folder: "inbox",
+    to: "me@hermes.local"
   },
 ];
